@@ -115,6 +115,7 @@ function s4w_ping_server($server_id = NULL) {
 }
 
 function s4w_build_document( $post_info, $domain = NULL, $path = NULL) {
+    global $current_blog;
     $doc = NULL;
     $plugin_s4w_settings = s4w_get_option();
     $exclude_ids = $plugin_s4w_settings['s4w_exclude_pages'];
@@ -285,14 +286,19 @@ function s4w_delete( $doc_id ) {
 }
 
 function s4w_delete_all() {
-    try {
-        $solr = s4w_get_solr();
-        if ( ! $solr == NULL ) {
-            $solr->deleteByQuery( '*:*' );
-            $solr->commit();
+    if (is_multisite()) {
+        global $current_blog;
+        s4w_delete_blog($current_blog->blog_id);
+    } else {
+        try {
+            $solr = s4w_get_solr();
+            if ( ! $solr == NULL ) {
+                $solr->deleteByQuery( '*:*' );
+                $solr->commit();
+            }
+        } catch ( Exception $e ) {
+            echo $e->getMessage();
         }
-    } catch ( Exception $e ) {
-        echo $e->getMessage();
     }
 }
 
@@ -319,7 +325,7 @@ function s4w_load_blog_all($blogid) {
     if ($bloginfo->public && !$bloginfo->archived && !$bloginfo->spam && !$bloginfo->deleted) {
         $postids = $wpdb->get_results("SELECT ID FROM {$wpdb->base_prefix}{$blogid}_posts WHERE post_status = 'publish';");
         for ($idx = 0; $idx < count($postids); $idx++) {
-            $postid = $ids[$idx];
+            $postid = $postids[$idx];
             $documents[] = s4w_build_document( get_blog_post($blogid, $postid->ID), $bloginfo->domain, $bloginfo->path );
             $cnt++;
             if ($cnt == $batchsize) {
@@ -344,7 +350,10 @@ function s4w_handle_modified( $post_id ) {
     
 	s4w_handle_status_change( $post_id, $post_info );
 
-    if (($index_pages && $post_info->post_type == 'page') || ($index_posts && $post_info->post_type == 'post')) {
+    if ((($index_pages && $post_info->post_type == 'page') || ($index_posts && $post_info->post_type == 'post'))
+            && $post_info->post_status != 'trash'
+            && $post_info->post_status != 'draft'
+            && $post_info->post_status != 'auto-draft') {
         
         # make sure this blog is not private or a spam if indexing on a multisite install
         if (is_multisite() && ($current_blog->public != 1 || $current_blog->spam == 1 || $current_blog->archived == 1)) {
@@ -377,9 +386,10 @@ function s4w_handle_status_change( $post_id, $post_info = null ) {
 	     * Inline edits won't have the prev_status of original_post_status,
 	     * instead we check of the _inline_edit variable is present in the $_POST variable
 	    */
-	    if ( ($_POST['prev_status'] == 'publish' || $_POST['original_post_status'] == 'publish' || 
-				( isset( $_POST['_inline_edit'] ) && !empty( $_POST['_inline_edit']) ) )  && 
-				($post_info->post_status == 'draft' || $post_info->post_status == 'private') ) {
+	    if ( $post_info->post_status == 'trash' || 
+            ( ($_POST['prev_status'] == 'publish' || $_POST['original_post_status'] == 'publish' || 
+                    ( isset( $_POST['_inline_edit'] ) && !empty( $_POST['_inline_edit']) ) )  && 
+				($post_info->post_status == 'draft' || $post_info->post_status == 'private') ) ) {
 	
 			if (is_multisite()) {
                 s4w_delete( $current_blog->domain . $current_blog->path . $post_info->ID );
@@ -1148,7 +1158,7 @@ function s4w_filter_str2list_numeric($input) {
 
 function s4w_filter_str2list($input) {
     $final = array();
-    if ($input != "") {
+    if ($input) {
         foreach( split(',', $input) as $val ) {
             $final[] = trim($val);
         }
