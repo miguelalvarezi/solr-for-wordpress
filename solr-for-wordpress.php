@@ -40,6 +40,7 @@ if (version_compare($wp_version, '3.0', '<')) {
 }
 
 require_once(dirname(__FILE__) . '/SolrPhpClient/Apache/Solr/Service.php');
+require_once 'autosearch.php';
 
 function s4w_get_option() {
     $indexall = FALSE;
