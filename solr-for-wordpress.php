@@ -1214,78 +1214,76 @@ function s4w_admin_head() {
     }
 ?>
 <script type="text/javascript">
-    var $j = jQuery.noConflict();
-    
     function switch1() {
-        if ($j('#solrconnect_single').is(':checked')) {
-            $j('#solr_admin_tab2').css('display', 'block');
-            $j('#solr_admin_tab2_btn').addClass('solr_admin_on');         
-            $j('#solr_admin_tab3').css('display', 'none');
-            $j('#solr_admin_tab3_btn').removeClass('solr_admin_on');            
+        if (jQuery('#solrconnect_single').is(':checked')) {
+            jQuery('#solr_admin_tab2').css('display', 'block');
+            jQuery('#solr_admin_tab2_btn').addClass('solr_admin_on');         
+            jQuery('#solr_admin_tab3').css('display', 'none');
+            jQuery('#solr_admin_tab3_btn').removeClass('solr_admin_on');            
         }
-        if ($j('#solrconnect_separated').is(':checked')) {
-            $j('#solr_admin_tab2').css('display', 'none');
-            $j('#solr_admin_tab2_btn').removeClass('solr_admin_on');  
-            $j('#solr_admin_tab3').css('display', 'block');
-            $j('#solr_admin_tab3_btn').addClass('solr_admin_on');                   
+        if (jQuery('#solrconnect_separated').is(':checked')) {
+            jQuery('#solr_admin_tab2').css('display', 'none');
+            jQuery('#solr_admin_tab2_btn').removeClass('solr_admin_on');  
+            jQuery('#solr_admin_tab3').css('display', 'block');
+            jQuery('#solr_admin_tab3_btn').addClass('solr_admin_on');                   
         }        
     }
  
     
     function doLoad($type, $prev) {
         if ($prev == null) {
-            $j.post("options-general.php?page=solr-for-wordpress/solr-for-wordpress.php", {method: "load", type: $type}, handleResults, "json");
+            jQuery.post("options-general.php?page=solr-for-wordpress/solr-for-wordpress.php", {method: "load", type: $type}, handleResults, "json");
         } else {
-            $j.post("options-general.php?page=solr-for-wordpress/solr-for-wordpress.php", {method: "load", type: $type, prev: $prev}, handleResults, "json");
+            jQuery.post("options-general.php?page=solr-for-wordpress/solr-for-wordpress.php", {method: "load", type: $type, prev: $prev}, handleResults, "json");
         }
     }
     
     function handleResults(data) {
-        $j('#percentspan').text(data.percent + "%");
+        jQuery('#percentspan').text(data.percent + "%");
         if (!data.end) {
             doLoad(data.type, data.last);
         } else {
-            $j('#percentspan').remove();
+            jQuery('#percentspan').remove();
             enableAll();
         }
     }
     
     function disableAll() {
-        $j('[name=s4w_postload]').attr('disabled','disabled');
-        $j('[name=s4w_deleteall]').attr('disabled','disabled');
-        $j('[name=s4w_init_blogs]').attr('disabled','disabled');
-        $j('[name=s4w_optimize]').attr('disabled','disabled');
-        $j('[name=s4w_pageload]').attr('disabled','disabled');
-        $j('[name=s4w_ping]').attr('disabled','disabled');
-        $j('#settingsbutton').attr('disabled','disabled');
+        jQuery('[name=s4w_postload]').attr('disabled','disabled');
+        jQuery('[name=s4w_deleteall]').attr('disabled','disabled');
+        jQuery('[name=s4w_init_blogs]').attr('disabled','disabled');
+        jQuery('[name=s4w_optimize]').attr('disabled','disabled');
+        jQuery('[name=s4w_pageload]').attr('disabled','disabled');
+        jQuery('[name=s4w_ping]').attr('disabled','disabled');
+        jQuery('#settingsbutton').attr('disabled','disabled');
     }
     
     function enableAll() {
-        $j('[name=s4w_postload]').removeAttr('disabled');
-        $j('[name=s4w_deleteall]').removeAttr('disabled');
-        $j('[name=s4w_init_blogs]').removeAttr('disabled');
-        $j('[name=s4w_optimize]').removeAttr('disabled');
-        $j('[name=s4w_pageload]').removeAttr('disabled');
-        $j('[name=s4w_ping]').removeAttr('disabled');
-        $j('#settingsbutton').removeAttr('disabled');
+        jQuery('[name=s4w_postload]').removeAttr('disabled');
+        jQuery('[name=s4w_deleteall]').removeAttr('disabled');
+        jQuery('[name=s4w_init_blogs]').removeAttr('disabled');
+        jQuery('[name=s4w_optimize]').removeAttr('disabled');
+        jQuery('[name=s4w_pageload]').removeAttr('disabled');
+        jQuery('[name=s4w_ping]').removeAttr('disabled');
+        jQuery('#settingsbutton').removeAttr('disabled');
     }
     
     $percentspan = '<span style="font-size:1.2em;font-weight:bold;margin:20px;padding:20px" id="percentspan">0%</span>';
     
-    $j(document).ready(function() {
+    jQuery(document).ready(function() {
         switch1();
-        $j('[name=s4w_postload]').click(function() {
-            $j(this).after($percentspan);
+        jQuery('[name=s4w_postload]').click(function() {
+            jQuery(this).after($percentspan);
             disableAll();
             doLoad("post", null);
-            $j(this).preventDefault();
+            jQuery(this).preventDefault();
         });
         
-        $j('[name=s4w_pageload]').click(function() {
-            $j(this).after($percentspan);
+        jQuery('[name=s4w_pageload]').click(function() {
+            jQuery(this).after($percentspan);
             disableAll();
             doLoad("page", null);
-            $j(this).preventDefault();
+            jQuery(this).preventDefault();
         });
     });
     
