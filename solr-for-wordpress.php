@@ -319,7 +319,7 @@ function s4w_load_blog_all($blogid) {
     global $wpdb;
     $documents = array();
     $cnt = 0;
-    $batchsize = 250;
+    $batchsize = 10;
     
     $bloginfo = get_blog_details($blogid, FALSE);
    
@@ -458,7 +458,7 @@ function s4w_load_all_posts($prev) {
     global $wpdb, $current_blog, $current_site;
     $documents = array();
     $cnt = 0;
-    $batchsize = 5;
+    $batchsize = 250;
     $last = "";
     $found = FALSE;
     $end = FALSE;
