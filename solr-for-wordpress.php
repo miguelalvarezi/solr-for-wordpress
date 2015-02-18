@@ -319,7 +319,7 @@ function s4w_load_blog_all($blogid) {
     global $wpdb;
     $documents = array();
     $cnt = 0;
-    $batchsize = 10;
+    $batchsize = 250;
     
     $bloginfo = get_blog_details($blogid, FALSE);
    
