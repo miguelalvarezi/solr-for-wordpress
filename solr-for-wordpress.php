@@ -458,7 +458,7 @@ function s4w_load_all_posts($prev) {
     global $wpdb, $current_blog, $current_site;
     $documents = array();
     $cnt = 0;
-    $batchsize = 250;
+    $batchsize = 5;
     $last = "";
     $found = FALSE;
     $end = FALSE;
@@ -1272,18 +1272,18 @@ function s4w_admin_head() {
     
     jQuery(document).ready(function() {
         switch1();
-        jQuery('[name=s4w_postload]').click(function() {
+        jQuery('[name=s4w_postload]').click(function(event) {
+            event.preventDefault();
             jQuery(this).after($percentspan);
             disableAll();
             doLoad("post", null);
-            jQuery(this).preventDefault();
         });
         
-        jQuery('[name=s4w_pageload]').click(function() {
+        jQuery('[name=s4w_pageload]').click(function(event) {
+            event.preventDefault();
             jQuery(this).after($percentspan);
             disableAll();
             doLoad("page", null);
-            jQuery(this).preventDefault();
         });
     });
     
